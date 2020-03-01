@@ -16,7 +16,7 @@ var connection = mysql.createConnection({
   database: "employee_db"
 });
 
-let selFunctionPromt = { 
+const selFunctionPromt = { 
 name: "selFunction",
 type: "list",
 message: "Would you like to add, view or update the Employee Database?",
@@ -27,7 +27,7 @@ choices:[
   "exit"
 ]};
 
-let addEmployeesPromt = [{
+const addEmployeesPromt = [{
   type: "input",
   name: "firstName",
   message: "enter employees first name"},
@@ -35,7 +35,26 @@ let addEmployeesPromt = [{
   name: "lastnName",
   message: "enter employees last name"},
 ];
-let addOptionsPromt = {
+const addRolePromt = [
+  {
+  type: "input",
+  name: "role",
+  message: "enter the name of the role you would like to add"
+},
+{
+  type: "input",
+  name: "salary",
+  message: "enter the salary for the role"
+}];
+const addDepartmentPromt = {
+  type: "input",
+  name: "department",
+  message: "enter the name of the new department"
+};
+
+
+
+const addOptionsPromt = {
   name: "addOptions",
   type: "list",
   message:"Do you want to add a Department, a new Role or a new Employee?",
@@ -46,6 +65,8 @@ let addOptionsPromt = {
     "Start over"
   ]
 };
+
+
 
 function main(){
   inquirer.prompt(selFunctionPromt).then(answers => {
@@ -91,7 +112,13 @@ function addEmployees(){
     let firstName = answers.firstName;
     let lastnName = answers.lastnName;
 
-    console.log(firstName +" " +lastnName)
+    const dbQuery = "INSERT INTO employee (first_name, last_name) VALUES (?,?)";
+
+    connection.query(dbQuery,[firstName,lastnName],function(err, res){
+      if (err) throw err;
+      console.log(`You added ${firstName} ${lastnName} to the database`);
+      main();
+    })
     
     
     
@@ -99,10 +126,35 @@ function addEmployees(){
   })
 };
 function addRole(){
+  inquirer.prompt(addRolePromt).then(answers =>{
+    let roleName = answers.role;
+    let salary = answers.salary;
 
+    const dbQuery = "INSERT INTO role (title, salary) VALUES (?,?)";
+
+    connection.query(dbQuery,[roleName,salary],function(err, res){
+      if (err) throw err;
+      console.log(`You added ${roleName} ${salary} to the role list `);
+      main();
+    })
+    
+    
+    
+
+  })
 };
 function addDepartment(){
+  inquirer.prompt(addDepartmentPromt).then(answers =>{
+    let departmentName = answers.department;
 
+    const dbQuery = "INSERT INTO department (department_name) VALUES (?)";
+
+    connection.query(dbQuery,[departmentName],function(err, res){
+      if (err) throw err;
+      
+      main();
+    })
+  })
 };
 function viewALL(){
   const employeeTable = "SELECT * FROM employee, role, department;"
@@ -116,8 +168,18 @@ function viewALL(){
   
 };
 function updateEmployees(){
+  
+  const employeeListdbQuery = "SELECT first_name, last_name FROM employee_db.employee;"
+  const employeeList = connection.query(employeeListdbQuery, function(err, result){
+    if (err) throw err;
+    // inquirer.prompt(employeeListPromt).then(answers =>{
+      
+    // })
 
-  console.log("Please select an employee")
+  })
+
+console.table(employeeList);
+  
 };
 
 

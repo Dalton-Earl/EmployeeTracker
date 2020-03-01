@@ -7,7 +7,7 @@ CREATE TABLE employee (
     id INT PRIMARY KEY NOT NULL AUTO_increment,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
-    role_id INT NOT NULL,
+    role_id INT,
     manager_id INT
 );
 
